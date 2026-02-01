@@ -1,112 +1,134 @@
-# maCAD System - Multi-Agent Code Analysis & Documentation System
+# maCAD System — Multi-Agent Code Analysis & Documentation
 
-A sophisticated multi-agent system that transforms any codebase into comprehensive, role-specific documentation with visual diagrams and real-time analysis.
+Transform any codebase into role-specific documentation with SDE/PM reports, architecture diagrams, Q&A with code citations, and PDF/Markdown export. Built with LangGraph, FastAPI, and Streamlit.
+
+## Overview
+
+maCAD is a multi-agent system that:
+
+- **Ingests** code (ZIP or GitHub), chunks and embeds it for semantic search
+- **Orchestrates** agents (Structure, Web Search, SDE, PM) via LangGraph with optional pause/resume
+- **Produces** structured SDE/PM reports, Mermaid diagrams, and exportable documentation
+- **Supports** Q&A over the codebase with file/line citations and optional Langfuse tracing
 
 ## Tech Stack
 
-- **Backend**: FastAPI (REST + WebSocket)
-- **Frontend**: Streamlit
-- **Database**: PostgreSQL + pgvector
-- **Orchestration**: LangGraph (for future milestones)
-- **Observability**: Langfuse (for future milestones)
+| Layer | Technology |
+|-------|------------|
+| **Backend** | FastAPI (REST + WebSocket/SSE) |
+| **Frontend** | Streamlit |
+| **Database** | PostgreSQL + pgvector |
+| **Orchestration** | LangGraph (async, SQLite checkpoints) |
+| **LLM / Embeddings** | OpenAI (configurable model) |
+| **Observability** | Langfuse (optional) |
+| **Web Search** | FastMCP server + Serper API (optional) |
+| **PDF Export** | Playwright → WeasyPrint → ReportLab fallback |
 
-## Setup
+## Features
+
+- **M1 — Foundation**: JWT auth, project CRUD, file upload (ZIP), storage
+- **M2 — Preprocessing**: Repo type/framework detection, multi-language parsing (8 languages), semantic chunking, pgvector embeddings
+- **M3 — Real-Time Progress**: SSE live updates, activity feed, stage-based progress
+- **M4 — Multi-Agent Orchestra**: Structure agent, conditional web search (knowledge gaps), SDE and PM agents, LangGraph workflow
+- **M5 — Interactive Control**: Pause/resume analysis, configurable pause timeout, human-in-the-loop ready
+- **M6 — Rich Outputs**: Structured SDE/PM reports, Documentation page, Mermaid diagrams, Q&A with code citations, PDF/Markdown export
+- **M7 — Observability**: Admin API & dashboard, Langfuse tracing, token/cost tracking per analysis
+
+Optional: **MCP server** (FastMCP) for web search; **Playwright** for high-quality PDFs; **Langfuse** for LLM observability.
+
+## Quick Start
 
 ### Prerequisites
 
 - Python 3.10+
-- Docker & Docker Compose
-- PostgreSQL 16+ with pgvector extension
+- Docker & Docker Compose (for PostgreSQL)
+- (Optional) OpenAI API key, Serper API key for web search, Langfuse keys for tracing
 
-### Installation
+### Install & Run
 
-1. Clone the repository
-2. Create a virtual environment:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+```bash
+# Clone and enter project
+cd maCAD-System
 
-3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+# Virtual environment
+python -m venv venv
+venv\Scripts\activate          # Windows
+# source venv/bin/activate    # Linux/Mac
 
-4. Copy environment file:
-   ```bash
-   cp .env.example .env
-   ```
+# Dependencies
+pip install -r requirements.txt
 
-5. Start PostgreSQL:
-   ```bash
-   docker-compose up -d
-   ```
+# Environment (copy .env.example to .env and set DB_*, JWT_SECRET_KEY, etc.)
+copy .env.example .env         # Windows
+# cp .env.example .env         # Linux/Mac
 
-6. Run database migrations:
-   ```bash
-   alembic upgrade head
-   ```
+# Database
+docker-compose up -d
+alembic upgrade head
 
-7. Start the FastAPI backend:
-   ```bash
-   uvicorn src.main:app --reload --port 8000
-   ```
+# Backend
+uvicorn src.main:app --reload --port 8000
 
-8. Start the Streamlit frontend (in another terminal):
-   ```bash
-   streamlit run streamlit_app/main.py --server.port 8501
-   ```
+# Frontend (separate terminal)
+streamlit run streamlit_app/main.py --server.port 8501
+
+# MCP Server (separate terminal)
+python mcp_server/app.py
+```
+
+**Full setup** (env vars, optional Playwright/MCP/Langfuse, troubleshooting): see **[SETUP.md](SETUP.md)**.
 
 ## Access
 
-- **API**: http://localhost:8000
-- **API Docs (Swagger)**: http://localhost:8000/docs
-- **Streamlit UI**: http://localhost:8501
+| What | URL |
+|------|-----|
+| **API** | http://localhost:8000 |
+| **API docs (Swagger)** | http://localhost:8000/docs |
+| **Streamlit app** | http://localhost:8501 |
+
+App pages: **Login** → **Dashboard** (create project, start analysis) → **Analysis Console** (progress, pause/resume, Q&A) → **Documentation** (reports, diagrams, export) → **Admin Dashboard** (admin users only).
 
 ## Project Structure
 
 ```
 maCAD-System/
-├── src/              # Backend source code
-├── streamlit_app/    # Frontend Streamlit app
-├── alembic/          # Database migrations
-├── storage/          # File storage (created automatically)
-└── tests/            # Tests
+├── src/                    # Backend
+│   ├── api/v1/             # Auth, projects, analysis, admin, semantic search
+│   ├── core/               # Config, security, exceptions
+│   ├── models/             # SQLAlchemy models
+│   ├── schemas/            # Pydantic schemas
+│   ├── services/           # Agents, orchestration, export, QA, MCP client
+│   ├── prompts/            # Externalized prompts (JSON)
+│   └── main.py             # FastAPI app
+├── streamlit_app/          # Frontend
+│   ├── pages/              # Login, Dashboard, Analysis Console, Documentation, Admin
+│   └── utils/              # API client, auth, mermaid renderer
+├── mcp_server/             # FastMCP web search tool (optional)
+├── alembic/                # Migrations
+├── scripts/                # init_db, seed_admin
+├── storage/                # Uploads & artifacts (created at runtime)
+├── .env.example            # Env template
+├── SETUP.md                # Full setup guide
+└── requirements.txt
 ```
 
-## Milestones
+## Milestones Summary
 
-- **M1**: Foundation - Authentication, Project Creation, File Handling ✅
-- **M2**: Intelligent Preprocessing - Code Analysis, Semantic Chunks, Embeddings ✅
-- **M3**: Real-Time Progress (upcoming)
-- **M4**: Multi-Agent Orchestra (upcoming)
-- **M5**: Interactive Control (upcoming)
-- **M6**: Rich Outputs (upcoming)
-- **M7**: Observability & Admin (upcoming)
+| Milestone | Status | Description |
+|-----------|--------|-------------|
+| **M1** | ✅ | Auth, projects, file handling |
+| **M2** | ✅ | Preprocessing, chunking, embeddings |
+| **M3** | ✅ | Real-time progress (SSE), activity feed |
+| **M4** | ✅ | Multi-agent orchestration (LangGraph) |
+| **M5** | ✅ | Pause/resume, configurable timeout |
+| **M6** | ✅ | Rich reports, docs page, Q&A citations, PDF/MD export |
+| **M7** | ✅ | Admin API/dashboard, Langfuse, token/cost tracking |
 
-## Current Status: Milestone 2 Complete ✅
+## Documentation
 
-### What M2 Provides
+- **[SETUP.md](SETUP.md)** — Full setup, environment variables, optional components (Playwright, MCP, Langfuse), troubleshooting
+- **API docs** — http://localhost:8000/docs (when backend is running)
 
-**Intelligent Code Preprocessing Pipeline**:
-- ✅ Repository type detection (Python, JavaScript, Java, etc.)
-- ✅ Framework identification (50+ frameworks supported)
-- ✅ Multi-language code parsing (8 languages with AST/regex)
-- ✅ Semantic code chunking (functions, classes, methods)
-- ✅ OpenAI embeddings for semantic search (pgvector)
-- ✅ 7 REST APIs for code intelligence queries
-- ✅ Real-time preprocessing job tracking
+## License & Support
 
-### Supported Languages
-Python (AST), JavaScript/TypeScript, Java, C#, Go, Rust, PHP
-
-### Key Features
-- Framework Detection: FastAPI, Django, Flask, React, Next.js, Spring, and 45+ more
-- Code Metadata: Functions, classes, methods, docstrings, parameters, return types
-- Repository Intelligence: Entry points, dependencies, file statistics
-- Semantic Storage: pgvector embeddings for similarity search (M3+)
-
-### Documentation
-- [M2_COMPLETE.md](M2_COMPLETE.md) - Completion summary
-- [M2_IMPLEMENTATION.md](M2_IMPLEMENTATION.md) - Technical documentation  
-- [M2_SETUP.md](M2_SETUP.md) - Setup and testing guide
+For assignment or usage details, refer to the project brief or repository owner.

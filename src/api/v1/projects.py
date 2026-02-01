@@ -31,7 +31,7 @@ async def create_project(
     db: AsyncSession = Depends(get_db)
 ):
     """Create a new project"""
-    logger.info(f"Creating project '{project_data.name}' for user {current_user.id} (source: {project_data.source_type.value})")
+    logger.debug(f"Creating project '{project_data.name}' for user {current_user.id}")
     project_service = ProjectService(db)
     
     # Handle GitHub URL
@@ -44,7 +44,7 @@ async def create_project(
                 personas=[p.value for p in project_data.personas],
                 config=project_data.config
             )
-            logger.info(f"Project created successfully: {project.name} (ID: {project.id})")
+            logger.info(f"Project created: {project.name} (ID: {project.id})")
         except Exception as e:
             logger.error(f"Error creating project from GitHub: {e}", exc_info=True)
             raise
@@ -78,7 +78,7 @@ async def upload_project(
     db: AsyncSession = Depends(get_db)
 ):
     """Upload a ZIP file to create a project"""
-    logger.info(f"Uploading project '{name}' for user {current_user.id} (file: {file.filename})")
+    logger.debug(f"Uploading project '{name}' for user {current_user.id}")
     project_service = ProjectService(db)
     
     # Parse personas
@@ -101,7 +101,7 @@ async def upload_project(
             personas=persona_list,
             config={}
         )
-        logger.info(f"Project uploaded successfully: {project.name} (ID: {project.id})")
+        logger.info(f"Project created: {project.name} (ID: {project.id})")
     except (InvalidFileException, FileTooLargeException, CorruptedFileException,
             UnsupportedFileTypeException, EmptyRepositoryException) as e:
         logger.warning(f"Project validation failed: {e.detail}")
@@ -222,9 +222,9 @@ async def preprocess_project(
     from uuid import UUID
     from src.services.code_chunker import CodeChunker
     from src.services.storage import storage_service
-    
-    logger.info(f"Preprocessing request for project {project_id} (user: {current_user.id})")
-    
+
+    logger.debug(f"Preprocessing request for project {project_id}")
+
     try:
         project_uuid = UUID(project_id)
     except ValueError:
@@ -263,7 +263,7 @@ async def preprocess_project(
     
     # For GitHub projects, clone the repository if not already done
     if project.source_type == SourceType.GITHUB:
-        logger.info(f"GitHub project detected - cloning repository")
+        logger.debug("GitHub project detected - cloning repository")
         try:
             project_service = ProjectService(db)
             extracted_path = await project_service.clone_github_repo(
@@ -271,7 +271,7 @@ async def preprocess_project(
                 project.source_path  # source_path contains the GitHub URL
             )
             extracted_full_path = storage_service.get_file_path(extracted_path)
-            logger.info(f"Successfully cloned GitHub repository to {extracted_full_path}")
+            logger.debug(f"Cloned GitHub repository to {extracted_full_path}")
         except Exception as e:
             logger.error(f"Failed to clone GitHub repository: {e}")
             raise HTTPException(
@@ -292,7 +292,7 @@ async def preprocess_project(
         code_chunker = CodeChunker(db)
         result = await code_chunker.preprocess_project(str(project_uuid), extracted_path)
         
-        logger.info(f"Preprocessing started for project {project.id}")
+        logger.debug(f"Preprocessing started for project {project.id}")
         return {
             "status": "preprocessing_started",
             "project_id": str(project.id),

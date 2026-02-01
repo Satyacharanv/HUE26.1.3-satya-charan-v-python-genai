@@ -11,6 +11,10 @@ import uvicorn
 
 # Set up logging
 logger = setup_logging("macad.main", log_file="app.log")
+# Suppress SQLAlchemy engine/pool INFO (SQL statements) in console
+import logging as _logging
+for _name in ("sqlalchemy.engine", "sqlalchemy.pool"):
+    _logging.getLogger(_name).setLevel(_logging.WARNING)
 
 # Create FastAPI app
 app = FastAPI(
@@ -44,7 +48,7 @@ app.include_router(admin.router, prefix=settings.API_V1_PREFIX)
 @app.exception_handler(MacadException)
 async def macad_exception_handler(request, exc: MacadException):
     """Handle custom maCAD exceptions"""
-    logger.warning(f"maCAD exception: {exc.detail} - Path: {request.url.path}")
+    logger.debug(f"maCAD exception: {exc.detail} - Path: {request.url.path}")
     return JSONResponse(
         status_code=exc.status_code,
         content={"detail": exc.detail}

@@ -136,7 +136,7 @@ class CodeChunker:
     
     async def preprocess_project(self, project_id: str, extracted_path: str) -> Dict[str, Any]:
         """Main preprocessing pipeline"""
-        logger.info(f"Starting preprocessing for project: {project_id}")
+        logger.debug(f"Starting preprocessing for project: {project_id}")
         self.embedding_failures = 0
         
         try:
@@ -167,7 +167,7 @@ class CodeChunker:
                 "message": "Step 1: Analyzing repository structure",
                 "stage": "repo_scan"
             })
-            logger.info(f"Step 1: Analyzing repository structure")
+            logger.debug("Step 1: Analyzing repository structure")
             self.analyzer = RepositoryAnalyzer(str(repo_path))
             repo_metadata = self.analyzer.analyze()
             
@@ -192,7 +192,7 @@ class CodeChunker:
             await self.db.commit()
             await self.db.refresh(repo_meta_record)
             
-            logger.info(f"Repository metadata created: {repo_meta_record.id}")
+            logger.debug(f"Repository metadata created: {repo_meta_record.id}")
             
             # Step 2: Process files and extract code chunks
             await self._maybe_pause()
@@ -202,7 +202,7 @@ class CodeChunker:
                 "message": "Step 2: Processing files and extracting code chunks",
                 "stage": "code_chunking"
             })
-            logger.info(f"Step 2: Processing files and extracting code chunks")
+            logger.debug("Step 2: Processing files and extracting code chunks")
             
             # Count total files first
             total_files = 0
@@ -366,7 +366,7 @@ class CodeChunker:
             # Commit all code chunks
             await self.db.commit()
             
-            logger.info(f"Preprocessing complete: {file_count} files, {total_chunks} chunks")
+            logger.debug(f"Preprocessing complete: {file_count} files, {total_chunks} chunks")
             
             # Step 3: Generate embeddings for remaining chunks
             if settings.OPENAI_API_KEY:
@@ -439,7 +439,7 @@ class CodeChunker:
                             "⚠️ Embedding generation timed out; skipping remaining chunks."
                         )
                         embedding_count = 0
-                    logger.info(f"Generated embeddings for {embedding_count} chunks")
+                    logger.debug(f"Generated embeddings for {embedding_count} chunks")
                 else:
                     await self._emit_progress({
                         "type": "log",

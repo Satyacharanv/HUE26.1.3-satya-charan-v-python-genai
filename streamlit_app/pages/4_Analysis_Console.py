@@ -68,11 +68,8 @@ analysis_id = query_params.get("analysis_id", None)
 if not analysis_id:
     analysis_id = st.session_state.get("latest_analysis_id")
 
-# Debug: Show what we received
 if not analysis_id:
     import sys
-    print(f"DEBUG: query_params = {dict(query_params)}", file=sys.stderr)
-    print(f"DEBUG: analysis_id = {analysis_id}", file=sys.stderr)
     # Clear SSE state to avoid stale errors
     st.session_state.sse_thread_started = False
     st.session_state.sse_connected = False

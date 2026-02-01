@@ -50,7 +50,7 @@ class AnalysisProgressService:
         self.db.add(analysis)
         await self.db.flush()
         
-        logger.info(f"Created analysis {analysis.id} for project {project_id}")
+        logger.debug(f"Created analysis {analysis.id} for project {project_id}")
         return analysis
     
     async def start_analysis(self, analysis_id: UUID) -> None:
@@ -63,7 +63,7 @@ class AnalysisProgressService:
             )
         )
         await self.db.commit()
-        logger.info(f"Started analysis {analysis_id}")
+        logger.debug(f"Started analysis {analysis_id}")
     
     async def update_progress(
         self,
@@ -263,7 +263,7 @@ class AnalysisProgressService:
             )
         )
         await self.db.commit()
-        logger.info(f"Paused analysis {analysis_id}")
+        logger.debug(f"Paused analysis {analysis_id}")
         try:
             await self.log_event(
                 analysis_id=analysis_id,
@@ -285,7 +285,7 @@ class AnalysisProgressService:
             )
         )
         await self.db.commit()
-        logger.info(f"Cancelled analysis {analysis_id}: {reason}")
+        logger.debug(f"Cancelled analysis {analysis_id}: {reason}")
         try:
             await self.log_event(
                 analysis_id=analysis_id,
@@ -309,7 +309,7 @@ class AnalysisProgressService:
             )
         )
         await self.db.commit()
-        logger.info(f"Resumed analysis {analysis_id}")
+        logger.debug(f"Resumed analysis {analysis_id}")
         try:
             await self.log_event(
                 analysis_id=analysis_id,
@@ -378,7 +378,7 @@ class AnalysisProgressService:
             )
         )
         await self.db.commit()
-        logger.info(f"Completed analysis {analysis_id}")
+        logger.info(f"Analysis completed: {analysis_id}")
     
     async def fail_analysis(self, analysis_id: UUID, error_message: str) -> None:
         """Mark analysis as failed"""

@@ -39,6 +39,23 @@ st.markdown("### Multi-Agent Code Analysis & Documentation System")
 
 st.markdown("---")
 
+
+def _render_home_content():
+    """What the app does and how it does it."""
+    st.markdown("""
+    ### What maCAD Does
+    
+    Transforms any codebase into **role-specific documentation**: SDE and PM reports, architecture and sequence diagrams, Q&A over your code with file and line citations, and PDF or Markdown export — all from a ZIP or GitHub repo.
+    
+    ### How It Works
+    
+    1. **Ingest & analyze** — Upload a ZIP or link a GitHub repo; maCAD chunks the code, detects frameworks and entry points, and builds semantic embeddings for search.
+    2. **Multi-agent workflow** — A LangGraph pipeline runs Structure, Web Search (optional), SDE, and PM agents to produce structured reports and Mermaid diagrams.
+    3. **Real-time control** — Watch progress live, pause or resume analysis, and ask questions during the run; answers include code citations.
+    4. **Documentation hub** — View SDE/PM reports and diagrams on the Documentation page, then export as PDF or Markdown.
+    """)
+
+
 # Check if user is authenticated
 if is_authenticated():
     st.success(f"✅ Logged in as **{st.session_state.user_email}**")
@@ -48,42 +65,10 @@ if is_authenticated():
         st.switch_page("pages/2_Dashboard.py")
     
     st.markdown("---")
-    st.markdown("""
-    ### What's Built
-    
-    ✅ **User Authentication** - Secure signup and login system with role-based access  
-    ✅ **Project Management** - Create and organize your code analysis projects  
-    ✅ **Multi-Source Support** - Analyze code from ZIP uploads or GitHub repositories  
-    ✅ **Persona Selection** - Choose documentation for Software Engineers (SDE) or Product Managers (PM)  
-    ✅ **File Validation** - Smart handling of corrupted files and invalid formats  
-    
-    ### What's Next
-    
-    🔜 **Intelligent Preprocessing** - Automatic code structure analysis and file categorization  
-    🔜 **Real-Time Progress** - Live updates as your code is being analyzed  
-    🔜 **Multi-Agent System** - Specialized agents working together for comprehensive documentation  
-    🔜 **Interactive Control** - Pause, resume, and ask questions during analysis  
-    🔜 **Rich Documentation** - Visual diagrams, architecture maps, and role-specific reports  
-    """)
+    _render_home_content()
     
 else:
-    st.markdown("""
-    ### What's Built
-    
-    ✅ **User Authentication** - Secure signup and login system with role-based access  
-    ✅ **Project Management** - Create and organize your code analysis projects  
-    ✅ **Multi-Source Support** - Analyze code from ZIP uploads or GitHub repositories  
-    ✅ **Persona Selection** - Choose documentation for Software Engineers (SDE) or Product Managers (PM)  
-    ✅ **File Validation** - Smart handling of corrupted files and invalid formats  
-    
-    ### What's Next
-    
-    🔜 **Intelligent Preprocessing** - Automatic code structure analysis and file categorization  
-    🔜 **Real-Time Progress** - Live updates as your code is being analyzed  
-    🔜 **Multi-Agent System** - Specialized agents working together for comprehensive documentation  
-    🔜 **Interactive Control** - Pause, resume, and ask questions during analysis  
-    🔜 **Rich Documentation** - Visual diagrams, architecture maps, and role-specific reports  
-    """)
+    _render_home_content()
     
     st.markdown("---")
     st.markdown("### Get Started")

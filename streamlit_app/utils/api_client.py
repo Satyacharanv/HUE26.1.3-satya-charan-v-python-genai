@@ -19,9 +19,6 @@ class APIClient:
         # Only attach Authorization header when we actually have a token
         if token:
             headers["Authorization"] = f"Bearer {token}"
-            print(f"DEBUG: API headers with token: {token[:20]}...")
-        else:
-            print(f"DEBUG: API headers WITHOUT token. Session state keys: {list(st.session_state.keys())}")
         return headers
     
     async def signup(self, email: str, password: str, role: str = "user") -> Dict[str, Any]:
@@ -261,8 +258,7 @@ class APIClient:
                 response = await client.get(url, params=params or None, headers=self._get_headers())
                 response.raise_for_status()
                 return response.json()
-        except Exception as e:
-            print(f"Error fetching latest analysis: {e}")
+        except Exception:
             return None
 
     async def list_analysis_templates(self) -> Dict[str, Any]:

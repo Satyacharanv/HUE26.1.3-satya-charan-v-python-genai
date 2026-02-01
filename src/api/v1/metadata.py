@@ -373,7 +373,7 @@ async def trigger_preprocessing(
     """
     from src.services.code_chunker import CodeChunker
     
-    logger.info(f"Starting preprocessing for project {project_id} (user: {current_user.id})")
+    logger.debug(f"Starting preprocessing for project {project_id}")
     
     # Verify project ownership
     result = await db.execute(
@@ -393,7 +393,7 @@ async def trigger_preprocessing(
         code_chunker = CodeChunker(db)
         result = await code_chunker.preprocess_project(project, current_user)
         
-        logger.info(f"Preprocessing started for project {project_id}")
+        logger.debug(f"Preprocessing started for project {project_id}")
         return {
             "status": "preprocessing_started",
             "project_id": str(project_id),

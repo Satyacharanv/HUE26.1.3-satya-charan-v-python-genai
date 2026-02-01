@@ -31,7 +31,7 @@ class SemanticSearchService:
         Find code chunks similar to a query using semantic search with pgvector.
         """
         try:
-            logger.info(f"Starting semantic search for query: '{query}' in project: {project_id}")
+            logger.debug(f"Semantic search for query in project: {project_id}")
             
             # Generate embedding for the query
             query_embedding = await self._generate_query_embedding(query)
@@ -82,7 +82,7 @@ class SemanticSearchService:
                         "confidence": "high" if similarity > 0.8 else "medium"
                     })
             
-            logger.info(f"Found {len(results)} chunks above threshold {similarity_threshold}")
+            logger.debug(f"Found {len(results)} chunks above threshold {similarity_threshold}")
             return results
             
         except Exception as e:

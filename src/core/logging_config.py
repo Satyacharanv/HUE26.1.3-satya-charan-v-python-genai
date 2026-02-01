@@ -63,10 +63,15 @@ def setup_logging(
     if log_file:
         file_path = logs_dir / log_file
         file_handler = logging.FileHandler(file_path, encoding='utf-8')
-        file_handler.setLevel(logging.DEBUG)  # Always log DEBUG to file
+        file_handler.setLevel(logging.DEBUG)
         file_handler.setFormatter(detailed_formatter)
         logger.addHandler(file_handler)
-    
+
+    # Suppress noisy SQLAlchemy engine/pool INFO (SQL echo)
+    for sql_logger_name in ("sqlalchemy.engine", "sqlalchemy.pool"):
+        sql_log = logging.getLogger(sql_logger_name)
+        sql_log.setLevel(logging.WARNING)
+
     return logger
 
 

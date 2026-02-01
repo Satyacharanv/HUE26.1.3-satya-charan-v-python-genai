@@ -7,10 +7,9 @@ from src.models.base import Base
 
 logger = get_logger(__name__)
 
-# Create async engine
 engine = create_async_engine(
     settings.DATABASE_URL,
-    echo=settings.DEBUG,
+    echo=False,
     future=True
 )
 
@@ -35,7 +34,6 @@ async def get_db() -> AsyncSession:
 
 async def init_db():
     """Initialize database (create tables)"""
-    logger.debug("Initializing database tables...")
     try:
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
@@ -47,7 +45,6 @@ async def init_db():
 
 async def close_db():
     """Close database connections"""
-    logger.debug("Closing database connections...")
     try:
         await engine.dispose()
         logger.info("Database connections closed successfully")

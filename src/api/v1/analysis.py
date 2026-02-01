@@ -463,7 +463,6 @@ async def ask_analysis_question(
     db: AsyncSession = Depends(get_db)
 ) -> dict:
     """Ask a question about the analyzed codebase (with citations)."""
-    logger.warning(f"Ask analysis: user={current_user.id} analysis_id={analysis_id} question_len={len(request.question)}")
     try:
         analysis_uuid = UUID(analysis_id)
     except ValueError:
@@ -529,7 +528,7 @@ async def ask_analysis_question(
         response=answer.get("answer", "")
     )
 
-    logger.info(f"Ask analysis success: analysis_id={analysis_id} response_len={len(answer.get('answer', ''))}")
+    logger.debug(f"Ask analysis success: analysis_id={analysis_id}")
     return {
         "analysis_id": analysis_id,
         "question": request.question,

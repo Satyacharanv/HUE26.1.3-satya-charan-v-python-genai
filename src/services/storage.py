@@ -37,7 +37,7 @@ class StorageService:
             with open(file_path, "wb") as f:
                 f.write(file_content)
             
-            logger.info(f"File saved successfully: {unique_filename} ({len(file_content)} bytes)")
+            logger.debug(f"File saved: {unique_filename} ({len(file_content)} bytes)")
             # Return relative path for storage in DB
             return str(file_path.relative_to(self.base_path))
             
@@ -60,7 +60,7 @@ class StorageService:
             with open(file_path, "wb") as f:
                 f.write(content)
             
-            logger.info(f"Project file saved: {file_path}")
+            logger.debug(f"Project file saved: {file_path}")
             return str(file_path.relative_to(self.base_path))
             
         except IOError as e:
@@ -76,7 +76,7 @@ class StorageService:
     
     def extract_zip(self, zip_path: str, project_id: int) -> str:
         """Extract ZIP file to project directory"""
-        logger.info(f"Extracting ZIP to project {project_id}: {zip_path}")
+        logger.debug(f"Extracting ZIP to project {project_id}: {zip_path}")
         
         try:
             zip_file_path = self.get_file_path(zip_path)
@@ -91,7 +91,7 @@ class StorageService:
             with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
                 zip_ref.extractall(extract_dir)
             
-            logger.info(f"ZIP extraction successful: {extract_dir}")
+            logger.debug(f"ZIP extraction successful: {extract_dir}")
             return str(extract_dir.relative_to(self.base_path))
             
         except zipfile.BadZipFile as e:

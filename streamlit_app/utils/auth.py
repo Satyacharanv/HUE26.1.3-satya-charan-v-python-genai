@@ -25,9 +25,8 @@ def save_session():
         try:
             with open(SESSION_FILE, 'w') as f:
                 json.dump(session_data, f)
-            print(f"Session saved: {session_data['user_email']}")
-        except Exception as e:
-            print(f"Failed to save session: {e}")
+        except Exception:
+            pass
 
 
 def load_session():
@@ -36,8 +35,8 @@ def load_session():
         if SESSION_FILE.exists():
             try:
                 SESSION_FILE.unlink()
-            except Exception as e:
-                print(f"Failed to delete session file: {e}")
+            except Exception:
+                pass
         return
     if SESSION_FILE.exists():
         try:
@@ -54,9 +53,8 @@ def load_session():
                 payload = _decode_jwt_payload(token)
                 if payload and payload.get("role"):
                     st.session_state.user_role = (payload.get("role") or "").strip()
-            print(f"Session loaded for: {session_data.get('user_email')}")
-        except Exception as e:
-            print(f"Failed to load session: {e}")
+        except Exception:
+            pass
 
 
 def is_authenticated() -> bool:
@@ -116,5 +114,5 @@ def logout():
     if SESSION_FILE.exists():
         try:
             SESSION_FILE.unlink()
-        except Exception as e:
-            print(f"Failed to delete session file: {e}")
+        except Exception:
+            pass

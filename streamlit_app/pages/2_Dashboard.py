@@ -2,7 +2,6 @@
 import streamlit as st
 import asyncio
 import httpx
-import sys
 from utils.api_client import api_client
 from utils.auth import is_authenticated, logout, load_session, is_admin
 from utils.validation import validate_zip_file, validate_github_url, get_file_size_warning
@@ -22,12 +21,6 @@ if "access_token" not in st.session_state:
     st.session_state.access_token = None
 if "user_email" not in st.session_state:
     st.session_state.user_email = None
-
-# Debug: Show current session state
-import sys
-token = st.session_state.get("access_token")
-email = st.session_state.get("user_email")
-print(f"DEBUG Dashboard - Token: {token[:20] if token else None}... Email: {email}", file=sys.stderr)
 
 # Check authentication
 if not is_authenticated():
@@ -173,9 +166,9 @@ with tab1:
                 if st.button("Open Console", use_container_width=True, key="mini_view"):
                     st.query_params.update({"analysis_id": str(latest_analysis['id'])})
                     st.switch_page("pages/4_Analysis_Console.py")
-    except Exception as e:
-        print(f"DEBUG: Error loading mini-player: {e}", file=sys.stderr)
-    
+    except Exception:
+        pass
+
     st.divider()
     
     try:

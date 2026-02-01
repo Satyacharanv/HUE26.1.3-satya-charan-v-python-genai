@@ -134,7 +134,7 @@ class RepositoryAnalyzer:
     
     def analyze(self) -> Dict[str, Any]:
         """Analyze repository and return metadata"""
-        logger.info(f"Analyzing repository: {self.repo_path}")
+        logger.debug(f"Analyzing repository: {self.repo_path}")
         
         try:
             # Detect repository type
@@ -169,7 +169,7 @@ class RepositoryAnalyzer:
                 "dependencies": dependencies,
             }
             
-            logger.info(f"Repository analysis complete: {repo_type} - {file_stats['code']} code files")
+            logger.debug(f"Repository analysis complete: {repo_type} - {file_stats['code']} code files")
             return metadata
             
         except Exception as e:

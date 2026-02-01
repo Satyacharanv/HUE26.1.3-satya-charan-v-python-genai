@@ -21,7 +21,7 @@ async def signup(
     db: AsyncSession = Depends(get_db)
 ):
     """Register a new user"""
-    logger.info(f"Signup attempt for email: {user_data.email}")
+    logger.debug(f"Signup attempt for email: {user_data.email}")
     
     # Check if user already exists
     result = await db.execute(
@@ -56,7 +56,7 @@ async def signup(
         await db.commit()
         await db.refresh(new_user)
         
-        logger.info(f"User created successfully: {new_user.email} (ID: {new_user.id}, Role: {new_user.role.value})")
+        logger.info(f"User created: {new_user.email}")
         
         return UserResponse(
             id=new_user.id,
@@ -74,7 +74,7 @@ async def login(
     db: AsyncSession = Depends(get_db)
 ):
     """Authenticate user and return access token"""
-    logger.info(f"Login attempt for email: {credentials.email}")
+    logger.debug(f"Login attempt for email: {credentials.email}")
     
     # Find user
     result = await db.execute(
@@ -92,7 +92,7 @@ async def login(
             # python-jose enforces `sub` to be a string
             data={"sub": str(user.id), "email": user.email, "role": user.role.value}
         )
-        logger.info(f"Login successful: {user.email} (ID: {user.id}, Role: {user.role.value})")
+        logger.info(f"Login successful: {user.email}")
         return Token(access_token=access_token)
     except Exception as e:
         logger.error(f"Error creating access token: {e}", exc_info=True)

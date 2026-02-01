@@ -42,7 +42,7 @@ class ProjectService:
         config: Optional[Dict[str, Any]] = None
     ) -> Project:
         """Create project from uploaded ZIP file"""
-        logger.info(f"Creating project from ZIP: {name} (file: {file.filename}, owner: {owner_id})")
+        logger.debug(f"Creating project from ZIP: {name} (file: {file.filename}, owner: {owner_id})")
         
         stored_path = None
         try:
@@ -104,7 +104,7 @@ class ProjectService:
                 if not final_extract.exists():
                     raise IOError(f"Extracted files not found at {final_extract}. Extraction may have failed.")
                 
-                logger.info(f"Project created successfully: {project.id} with extracted files at {final_extract}")
+                logger.info(f"Project created: {project.id}")
                 return project
                 
             except Exception as e:
@@ -113,7 +113,7 @@ class ProjectService:
                 try:
                     if stored_path and self.storage.file_exists(stored_path):
                         os.remove(self.storage.get_file_path(stored_path))
-                        logger.info(f"Cleaned up uploaded file: {stored_path}")
+                        logger.debug(f"Cleaned up uploaded file: {stored_path}")
                 except Exception as cleanup_error:
                     logger.error(f"Error cleaning up file: {cleanup_error}", exc_info=True)
                 raise
@@ -131,7 +131,7 @@ class ProjectService:
         config: Optional[Dict[str, Any]] = None
     ) -> Project:
         """Create project from GitHub URL"""
-        logger.info(f"Creating project from GitHub: {name} (URL: {github_url}, owner: {owner_id})")
+        logger.debug(f"Creating project from GitHub: {name} (URL: {github_url})")
         
         # Validate GitHub URL
         if not self._validate_github_url(github_url):
@@ -158,7 +158,7 @@ class ProjectService:
             await self.db.commit()
             await self.db.refresh(project)
             
-            logger.info(f"GitHub project created successfully: {project.name} (ID: {project.id})")
+            logger.info(f"Project created: {project.name} (ID: {project.id})")
             return project
         except Exception as e:
             logger.error(f"Error creating GitHub project: {e}", exc_info=True)
@@ -175,7 +175,7 @@ class ProjectService:
         Returns:
             Path to extracted repository
         """
-        logger.info(f"Cloning GitHub repository: {github_url} for project {project_id}")
+        logger.debug(f"Cloning GitHub repository for project {project_id}")
         
         try:
             # Create target directory for cloned repo
@@ -222,7 +222,7 @@ class ProjectService:
             if file_count == 0:
                 raise GitHubAccessException("Repository appears to be empty")
             
-            logger.info(f"Successfully cloned repository with {file_count} files/directories")
+            logger.debug(f"Cloned repository with {file_count} files")
             
             # Return relative path for storage
             relative_path = f"projects/{str(project_id)}/extracted"

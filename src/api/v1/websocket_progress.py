@@ -29,7 +29,7 @@ class ConnectionManager:
         if analysis_id not in self.active_connections:
             self.active_connections[analysis_id] = []
         self.active_connections[analysis_id].append(websocket)
-        logger.info(f"Client connected to analysis {analysis_id}")
+        logger.debug(f"Client connected to analysis {analysis_id}")
     
     async def disconnect(self, analysis_id: UUID, websocket: WebSocket):
         """Remove a WebSocket connection"""
@@ -37,7 +37,7 @@ class ConnectionManager:
             self.active_connections[analysis_id].remove(websocket)
             if not self.active_connections[analysis_id]:
                 del self.active_connections[analysis_id]
-        logger.info(f"Client disconnected from analysis {analysis_id}")
+        logger.debug(f"Client disconnected from analysis {analysis_id}")
     
     async def broadcast(self, analysis_id: UUID, message: dict):
         """Send message to all connected clients for an analysis"""
@@ -132,7 +132,7 @@ async def websocket_analysis_progress(
             command_type = data.get("type")
             command_data = data.get("data", {})
             
-            logger.info(f"Received command: {command_type} for analysis {analysis_id}")
+            logger.debug(f"Received command: {command_type} for analysis {analysis_id}")
             
             if command_type == "pause":
                 await progress_service.pause_analysis(analysis_uuid)
@@ -189,7 +189,7 @@ async def websocket_analysis_progress(
     
     except WebSocketDisconnect:
         await manager.disconnect(analysis_uuid, websocket)
-        logger.info(f"WebSocket disconnected for analysis {analysis_id}")
+        logger.debug(f"WebSocket disconnected for analysis {analysis_id}")
     
     except Exception as e:
         logger.error(f"WebSocket error: {e}")
