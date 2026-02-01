@@ -26,9 +26,13 @@ env/
 ENV/
 .venv
 
+# Streamlit secrets (never commit)
+.streamlit/secrets.toml
+
 # IDE
 .vscode/
 .idea/
+.cursor/
 *.swp
 *.swo
 *~
@@ -36,6 +40,8 @@ ENV/
 # Environment
 .env
 .env.local
+.env.*
+!.env.example
 
 # Storage
 storage/
@@ -57,3 +63,12 @@ Thumbs.db
 
 # Alembic
 alembic/versions/*.pyc
+
+# Testing / type-checking
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+
+# Playwright (optional local browser data)
+.playwright/
