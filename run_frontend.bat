@@ -1,0 +1,3 @@
+@echo off
+echo Starting Streamlit frontend...
+streamlit run streamlit_app/main.py --server.port 8501

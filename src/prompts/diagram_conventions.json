@@ -1,0 +1,20 @@
+{
+  "description": "Conventions for Mermaid diagrams generated from repo_summary (architecture, sequence, flowchart, ER). Used to keep diagrams repo-specific and readable.",
+  "architecture_flowchart": {
+    "direction": "LR",
+    "nodes": ["Client", "API (repo_type + framework)", "Entrypoints (from entrypoint_files)", "Routes (count + sample path prefixes)", "Models (model_hints sample)", "Database", "Config (optional from config_files)"],
+    "rules": ["Use short labels; escape brackets and quotes.", "Include real entrypoint filenames and route count.", "Show model names or count when available."]
+  },
+  "sequence_diagram": {
+    "participants": ["Client", "API", "DB"],
+    "rules": ["Use actual METHOD and path from api_routes (e.g. POST /auth/login).", "Each flow: Client->>API: request, API->>DB: Query/Validate, DB-->>API: Result, API-->>Client: Response.", "When no routes, use model names (Login, Token, UserResponse) for generic flows.", "Keep path length under 32 chars in labels."]
+  },
+  "flowchart_request_flow": {
+    "direction": "TD",
+    "rules": ["Derive steps from first path segment of api_routes (e.g. auth, api, projects).", "Chain: Client -> API -> step1 -> step2 -> ... -> Response.", "If no routes, use analysis pipeline: Start -> Scan -> Chunk -> Embed -> Agents -> Done."]
+  },
+  "er_diagram": {
+    "rules": ["Use model_hints for entity names (USER, PROJECT, ANALYSIS, etc.).", "Infer relationships from names (User owns Project, Project has Analysis, Analysis produces Artifact).", "Fallback to generic USER, PROJECT, ANALYSIS, CODE_CHUNK, ANALYSIS_LOG when no hints."]
+  },
+  "general": ["All labels: alphanumeric and short; no raw slashes in node IDs.", "Prefer repo-specific data (api_routes, entrypoint_files, model_hints) over generic placeholders."]
+}
